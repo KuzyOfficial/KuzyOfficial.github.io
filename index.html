@@ -520,8 +520,6 @@ body.calm::before{animation:none!important}
 
   <div id="friends" class="screen hidden">
     <div class="apphead"><button class="back js-tohub">← Home</button><h2>👥 Friends</h2></div>
-    <div class="htabs" id="ftabs" style="margin:0 0 12px"><button data-ft="friends" class="on">Friends</button><button data-ft="gg">GGCSE</button></div>
-    <div id="fgg" class="hidden"><div class="card"><h3>🎮 Challenges</h3><div class="muted" style="margin-bottom:10px">Challenge a friend to a match. They get a pop-up to join.</div><div class="flist" id="gglist"></div></div></div>
     <div id="fguest" class="card hidden">Friends need an account. <button class="primary js-signin">Sign in</button></div>
     <div id="fmain">
       <div class="card">
@@ -1999,7 +1997,7 @@ App.setInvites=list=>{
   F.invites=fresh; showInviteToast();
 };
 function showInviteToast(){
-  const t=$('toast'), inv=F.invites[0];
+  const t=$('toast'), inv=F.invites.find(x=>x.type==='study');
   if(!inv||(G&&!G.over&&G.mode==='online')){ t.style.display='none'; shownInvite=null; return; }
   if(shownInvite===inv.id+(inv.code||inv.sid)) return;
   shownInvite=inv.id+(inv.code||inv.sid); t.innerHTML='';
@@ -2165,21 +2163,8 @@ $('openchat').onclick=()=>{ if(window.Acct&&Acct.chat) openRoom(); };
 
 
 
-// ----- Friends → GGCSE tab: game challenges -----
 let fTab='friends';
-function setFTab(t){ fTab=t; for(const b of document.querySelectorAll('#ftabs button')) b.classList.toggle('on',b.dataset.ft===t);
-  $('fmain').classList.toggle('hidden',t!=='friends'||!hasAcct()); $('fgg').classList.toggle('hidden',t!=='gg'||!hasAcct()); if(t==='gg') renderGG(); }
-for(const b of document.querySelectorAll('#ftabs button')) b.onclick=()=>setFTab(b.dataset.ft);
-function renderGG(){
-  const box=$('gglist'); box.innerHTML='';
-  if(!F.friends.length){ box.innerHTML='<div class="muted">Add friends first (Friends tab).</div>'; return; }
-  for(const f of [...F.friends].sort((a,b)=>(a.name||'').localeCompare(b.name||''))){
-    const it=document.createElement('div'); it.className='fitem';
-    const n=document.createElement('span'); n.className='nm'; n.textContent=f.name||'Friend';
-    const st=document.createElement('span'); st.className='st'; const s=F.stats[f.id]; st.textContent=s&&typeof s.elo==='number'?`Rating ${s.elo}`:'';
-    it.append(n,st,fbtn('Challenge to a match','primary',()=>challenge(f))); box.appendChild(it);
-  }
-}
+function setFTab(){ $('fmain').classList.toggle('hidden',!hasAcct()); }
 const _openFriends=openFriends;
 openFriends=function(){ _openFriends(); setFTab(fTab); };
 // ================= MESSAGES INBOX =================
