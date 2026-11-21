@@ -410,7 +410,7 @@ body.calm::before{animation:none!important}
     <div class="tiles">
       <button class="tile" id="opennotes"><div class="ic" style="background:#3b5f8a;font-size:2rem">📝</div><b>Notes</b><span>Your notes</span><div class="go">View</div></button>
       <button class="tile" id="opencards"><div class="ic" style="background:#7a4d8f;font-size:2rem">🗂️</div><b>Flashcards</b><span>Make flashcards</span><div class="go">View</div></button>
-      <button class="tile" id="openfriends"><div class="ic" style="background:#8a6a2b;font-size:2rem">👥</div><b>Friends<span id="fbadge" class="badge2 hidden"></span></b><span>Add friends and study with them</span><div class="go">View</div></button>
+      <button class="tile" id="openfriends"><div class="ic" style="background:#8a6a2b;font-size:2rem">👥</div><b>Study with<span id="fbadge" class="badge2 hidden"></span></b><span>Add people to study with</span><div class="go">View</div></button>
       <button class="tile" id="openmsgs"><div class="ic" style="background:linear-gradient(135deg,#8a2b6b,#5a1f4a);font-size:2rem">✉️</div><b>Messages<span id="mbadge" class="badge2 hidden"></span></b><span>Private chats with friends</span><div class="go">View</div></button>
       <button class="tile" id="openchat"><div class="ic" style="background:linear-gradient(135deg,#2b7a8a,#1f4f6b);font-size:2rem">💬</div><b>Chat</b><span>Chat here</span><div class="go">View</div></button>
       <button class="tile hidden" id="openadmin"><div class="ic" style="background:#8a2b2b;font-size:2rem">👑</div><b>Admin</b><span>Manage players</span><div class="go">View</div></button>
@@ -438,7 +438,7 @@ body.calm::before{animation:none!important}
         <div class="row" style="margin-top:10px"><button class="primary" id="create">Create match</button></div>
         <div class="row hidden" id="finvrow" style="margin-top:10px"><select id="finvsel" style="flex:1;min-width:120px"></select><button id="finvbtn">Invite friend</button></div>
         <div id="linkbox">
-          <div class="muted">Send this link to your friend. The match starts when they open it.</div>
+          <div class="muted">Send this link to who you're studying with. It starts when they open it.</div>
           <input id="link" readonly onclick="this.select()">
           <div class="row"><button id="copy">Copy link</button><span class="muted">Code: <b id="code"></b> · waiting…</span></div>
         </div>
@@ -519,16 +519,16 @@ body.calm::before{animation:none!important}
 
 
   <div id="friends" class="screen hidden">
-    <div class="apphead"><button class="back js-tohub">← Home</button><h2>👥 Friends</h2></div>
-    <div id="fguest" class="card hidden">Friends need an account. <button class="primary js-signin">Sign in</button></div>
+    <div class="apphead"><button class="back js-tohub">← Home</button><h2>👥 Study with</h2></div>
+    <div id="fguest" class="card hidden">You need an account first. <button class="primary js-signin">Sign in</button></div>
     <div id="fmain">
       <div class="card">
-        <h3>Add a friend</h3>
-        <div class="row"><input id="fadd" placeholder="Their username" maxlength="20" autocapitalize="off" spellcheck="false" style="flex:1;min-width:160px"><button class="primary" id="faddbtn">Send request</button></div>
+        <h3>Add someone</h3>
+        <div class="row"><input id="fadd" placeholder="Their username" maxlength="20" autocapitalize="off" spellcheck="false" style="flex:1;min-width:160px"><button class="primary" id="faddbtn">Add</button></div>
         <div id="faddmsg" class="muted" style="margin-top:8px"></div>
       </div>
-      <div class="card" id="freqcard"><h3>Friend requests</h3><div class="flist" id="freqs"></div></div>
-      <div class="card"><h3>Your friends</h3><div class="flist" id="flist"><div class="muted">Loading…</div></div></div>
+      <div class="card" id="freqcard"><h3>Requests</h3><div class="flist" id="freqs"></div></div>
+      <div class="card"><h3>Studying with</h3><div class="flist" id="flist"><div class="muted">Loading…</div></div></div>
     </div>
   </div>
 
@@ -628,7 +628,7 @@ body.calm::before{animation:none!important}
         <div class="row" style="gap:14px;align-items:center"><div id="pfav" style="font-size:3rem;width:72px;height:72px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.06)">👤</div>
           <div><div style="font-size:1.3rem;font-weight:800" class="js-me">Guest</div><div class="muted" id="pfstats"></div></div></div>
         <div class="muted" style="margin:12px 0 6px">Avatar</div><div class="row" id="pfavatars" style="gap:6px"></div>
-        <div class="muted" style="margin:12px 0 6px">Bio (friends can see this)</div>
+        <div class="muted" style="margin:12px 0 6px">Bio (people you study with can see this)</div>
         <input id="pfbio" maxlength="80" placeholder="e.g. Year 11 · aiming for 7s" style="width:100%">
       </div>
       <div class="card">
@@ -1481,7 +1481,7 @@ function joinGame(code){
   resetNet(); msg('Connecting…');
   peer=new Peer();
   peer.on('open',()=>{ conn=peer.connect('ggcse-room-'+code,{reliable:true}); wire(conn); });
-  peer.on('error',e=>msg(e.type==='peer-unavailable'?'Match not found — check the code, or ask your friend to create a new one.':'Connection error: '+e.type));
+  peer.on('error',e=>msg(e.type==='peer-unavailable'?'Match not found — check the code, or ask them to create a new one.':'Connection error: '+e.type));
 }
 function wire(c){
   c.on('data',d=>{
@@ -1655,7 +1655,7 @@ $('send').onclick=()=>{ sendChat($('chatin').value); $('chatin').value=''; };
 $('chatin').onkeydown=e=>{ if(e.key==='Enter'){ sendChat($('chatin').value); $('chatin').value=''; } };
 
 let pendingJoin=location.hash.length>1?location.hash.slice(1).toUpperCase():null;
-if(pendingJoin){ $('joincode').value=pendingJoin; $('wsub').textContent='Sign in to join your friend\'s match.'; }
+if(pendingJoin){ $('joincode').value=pendingJoin; $('wsub').textContent='Sign in to join your study session.'; }
 setTimeout(()=>{ if(!$('splash').classList.contains('hidden')) App.noAccounts("Couldn't reach the account server. Check your connection and refresh."); },9000);
 </script>
 
@@ -1940,7 +1940,7 @@ function renderRequests(){
   for(const r of F.requests){
     const it=document.createElement('div'); it.className='fitem';
     const nm=document.createElement('span'); nm.className='nm'; nm.textContent=r.name||'Someone';
-    const st=document.createElement('span'); st.className='st'; st.textContent='wants to be friends';
+    const st=document.createElement('span'); st.className='st'; st.textContent='wants to study with you';
     it.append(nm,st,
       fbtn('Accept','primary',async()=>{ try{ await Acct.friends.accept(r); }catch(e){ $('faddmsg').textContent='Couldn\'t accept: '+e.message; } }),
       fbtn('Decline','',()=>Acct.friends.decline(r)));
@@ -1949,26 +1949,22 @@ function renderRequests(){
 }
 async function renderFriends(){
   const box=$('flist'); box.innerHTML='';
-  if(!F.friends.length){ box.innerHTML='<div class="muted">No friends yet. Add someone by their username above.</div>'; return; }
+  if(!F.friends.length){ box.innerHTML='<div class="muted">Nobody yet. Add someone by their username above.</div>'; return; }
   const list=[...F.friends].sort((x,y)=>(x.name||'').localeCompare(y.name||''));
   for(const f of list){
     const it=document.createElement('div'); it.className='fitem';
     const nm=document.createElement('span'); nm.className='nm'; nm.textContent=f.name||'Friend';
-    const st=document.createElement('span'); st.className='st'; const s=F.stats[f.id]; st.textContent=s?`${s.wins||0}W · ${s.losses||0}L · ${s.draws||0}D`:'';
-    const ib=D.inboxMap[f.id], msgb=fbtn('💬 Message','',()=>openDM(f));
-    if(ib&&ib.unread){ const dot=document.createElement('span'); dot.className='udot'; msgb.appendChild(dot); }
-    const stb=fbtn('📚 Study','primary',()=>pickStudy(f));
+    const st=document.createElement('span'); st.className='st';
     const rm=fbtn('Remove','',()=>confirmBtn(rm,'Remove',()=>Acct.friends.remove(f).catch(()=>{})));
-    it.append(nm,st,stb,msgb,rm); box.appendChild(it);
-    if(!s&&hasAcct()) Acct.friends.stats(f.id).then(d=>{ F.stats[f.id]=d; st.textContent=`${d.wins||0}W · ${d.losses||0}L · ${d.draws||0}D`; }).catch(()=>{});
+    it.append(nm,st); if(f.gg) it.append(fbtn('📚 Study with them','primary',()=>challenge(f))); it.append(rm); box.appendChild(it);
   }
 }
 function challenge(f){
-  showScreen('home'); $('lobbymsg').textContent=`Setting up a match for ${f.name}…`;
+  showScreen('home'); $('lobbymsg').textContent=`Setting up a study session with ${f.name}…`;
   createGame(code=>{
     Acct.friends.invite(f.id,code)
-      .then(()=>{ $('lobbymsg').textContent=`Challenge sent to ${f.name}! The match starts as soon as they accept.`; })
-      .catch(()=>{ $('lobbymsg').textContent=`Couldn't send the challenge. You can send ${f.name} the link instead.`; });
+      .then(()=>{ $('lobbymsg').textContent=`Invite sent to ${f.name}! You'll start as soon as they accept.`; })
+      .catch(()=>{ $('lobbymsg').textContent=`Couldn't send the invite. They may need GGCSE added first.`; });
   });
 }
 $('faddbtn').onclick=async()=>{
@@ -1997,12 +1993,12 @@ App.setInvites=list=>{
   F.invites=fresh; showInviteToast();
 };
 function showInviteToast(){
-  const t=$('toast'), inv=F.invites.find(x=>x.type==='study');
+  const t=$('toast'), inv=F.invites[0];
   if(!inv||(G&&!G.over&&G.mode==='online')){ t.style.display='none'; shownInvite=null; return; }
   if(shownInvite===inv.id+(inv.code||inv.sid)) return;
   shownInvite=inv.id+(inv.code||inv.sid); t.innerHTML='';
   const study=inv.type==='study';
-  const tx=document.createElement('span'); tx.textContent=study?`📚 ${inv.name||'A friend'} wants to study ${inv.title||''} together!`:`${inv.name||'A friend'} challenged you to a match!`;
+  const tx=document.createElement('span'); tx.textContent=study?`📚 ${inv.name||'A friend'} wants to study ${inv.title||''} together!`:`📚 ${inv.name||'Someone'} wants to study with you!`;
   t.append(tx,
     fbtn('Join','primary',()=>{ t.style.display='none'; Acct.friends.dismiss(inv.id); if(study){ openTogether(inv.sid,true); return; } resetNet(); G=null; showScreen('home'); joinGame(inv.code); }),
     fbtn('Not now','',()=>{ t.style.display='none'; Acct.friends.dismiss(inv.id); }));
@@ -3391,7 +3387,7 @@ const HPOINTS={maths:{'Rounding & bounds':[2],'Fractions, decimals & percentages
   sci:{'Moles & masses':[0,1],'Reversible reactions':[1],'Magnetism & electromagnetism':[1],'Electrolysis':[1]}};
 const HASLEVEL={maths:{tier:true},sci:{tier:true,route:true}};
 function getLevel(id){ let v={}; try{ v=JSON.parse(localStorage.getItem('cs_lvl_'+id)||'{}'); }catch(e){} return {tier:v.tier||'H',route:v.route||'C'}; }
-function setLevel(id,v){ try{ localStorage.setItem('cs_lvl_'+id,JSON.stringify(v)); }catch(e){} if(window.Acct&&Acct.user&&Acct.savePrefs){ /* kept on this device */ } }
+function setLevel(id,v){ try{ localStorage.setItem('cs_lvl_'+id,JSON.stringify(v)); }catch(e){} try{ if(window.Acct&&Acct.user&&Acct.saveMeta){ const all={}; for(let i=0;i<localStorage.length;i++){ const key=localStorage.key(i); if(key&&key.indexOf('cs_lvl_')===0) all[key.slice(7)]=JSON.parse(localStorage.getItem(key)); } Acct.saveMeta('levels',all); } }catch(e){} }
 const isTriple=s=>s.startsWith('Triple only');
 function topicVisible(subj,secName,tname){
   const L=getLevel(subj.id), H=HASLEVEL[subj.id]||{};
@@ -3713,7 +3709,7 @@ let SETTINGS={sound:true,calm:false,accent:ACCENTS[0]};
 let PROFILE={avatar:'👤',bio:'',exams:[],streak:0,lastDay:''};
 try{ Object.assign(SETTINGS,JSON.parse(localStorage.getItem('cs_settings')||'{}')); }catch(e){}
 window.SETTINGS=SETTINGS;
-function saveSettings(){ try{ localStorage.setItem('cs_settings',JSON.stringify(SETTINGS)); }catch(e){} }
+function saveSettings(){ try{ localStorage.setItem('cs_settings',JSON.stringify(SETTINGS)); }catch(e){} try{ if(window.Acct&&Acct.user&&Acct.saveMeta) Acct.saveMeta('settings',SETTINGS); }catch(e){} }
 function applySettings(){
   document.documentElement.style.setProperty('--accent',SETTINGS.accent||ACCENTS[0]);
   document.body.classList.toggle('calm',!!SETTINGS.calm);
@@ -4003,10 +3999,10 @@ body:not(.ggok) #hub .htabs [data-tab="gg"], body:not(.ggok) #ftabs [data-ft="gg
 // GGCSE stays hidden until the account "GGCSE" is one of your friends
 const ggKey=()=>'cs_gg_'+((window.Acct&&Acct.user&&Acct.user.uid)||'');
 function ggUnlocked(){ try{ return !!(window.Acct&&Acct.user) && localStorage.getItem(ggKey())==='1'; }catch(e){ return false; } }
-function ggSet(on){ try{ on?localStorage.setItem(ggKey(),'1'):localStorage.removeItem(ggKey()); }catch(e){} syncGG(); if(!$('friends').classList.contains('hidden')) renderFriends(); }
+function ggSet(on){ try{ on?localStorage.setItem(ggKey(),'1'):localStorage.removeItem(ggKey()); }catch(e){} syncGG(); try{ if(window.Acct&&Acct.setGG) Acct.setGG(on); }catch(e){} if(!$('friends').classList.contains('hidden')) renderFriends(); }
 // "GGCSE" is a built-in name: adding it unlocks straight away, no real account needed
 const _fadd=$('faddbtn').onclick;
-$('faddbtn').onclick=function(){ if($('fadd').value.trim().toLowerCase()==='ggcse'&&window.Acct&&Acct.user){ $('fadd').value=''; if(ggUnlocked()){ $('faddmsg').textContent='GGCSE is already your friend.'; return; } ggSet(true); $('faddmsg').textContent='GGCSE added. The GGCSE tab is unlocked.'; return; } return _fadd.apply(this,arguments); };
+$('faddbtn').onclick=function(){ if($('fadd').value.trim().toLowerCase()==='ggcse'&&window.Acct&&Acct.user){ $('fadd').value=''; if(ggUnlocked()){ $('faddmsg').textContent='GGCSE is already added.'; return; } ggSet(true); $('faddmsg').textContent='GGCSE added. The GGCSE tab is unlocked.'; return; } return _fadd.apply(this,arguments); };
 const _rf=renderFriends;
 renderFriends=async function(){ await _rf(); if(!ggUnlocked()) return; const box=$('flist'); if(!F.friends.length) box.innerHTML='';
   const it=document.createElement('div'); it.className='fitem'; const nm=document.createElement('span'); nm.className='nm'; nm.textContent='GGCSE';
@@ -4058,16 +4054,17 @@ const SHEET_URL='https://script.google.com/macros/s/AKfycbwmhTHAp_0Hib5m4Pcsv2zs
         delta=Math.round(K*(S-E)); this.elo=Math.max(100,R+delta); this.rated++; this.peak=Math.max(this.peak,this.elo);
         x.eloAfter=this.elo; x.eloDelta=delta;
       }
-      const recent=L.get(k()+'_games',[]); recent.unshift({...x,at:Date.now()}); L.set(k()+'_games',recent.slice(0,15));
+      const recent=L.get(k()+'_games',[]); recent.unshift({...x,at:Date.now()}); L.set(k()+'_games',recent.slice(0,15)); this.saveMeta('recent',{list:recent.slice(0,15)});
       this.clearCurrent();
       api('record',{...me(),result:x.result,ranked:x.ranked?'1':'0',elo:this.elo,delta:delta==null?'':delta,mode:x.mode||'',level:x.mode==='bot'&&x.level?x.level:'',opp:x.opp||'',moves:x.moves||''})
         .then(loadHome).catch(e=>console.warn('save failed',e));
       return delta;
     },
-    saveCurrent(cur){ if(this.user) L.set(k()+'_cur',cur); },
-    clearCurrent(){ if(this.user){ App.setResume(null); L.set(k()+'_cur',null); } },
+    saveCurrent(cur){ if(this.user){ L.set(k()+'_cur',cur); clearTimeout(this._ct); this._ct=setTimeout(()=>this.saveMeta('cur',cur),3000); } },
+    clearCurrent(){ if(this.user){ App.setResume(null); L.set(k()+'_cur',null); clearTimeout(this._ct); this.saveMeta('cur',{}); } },
     savePrefs(p){ if(this.user){ L.set(k()+'_prefs',p); post('ssave',{kind:'meta',id:'prefs',data:p}).catch(e=>console.warn(e)); } },
     refresh(){ loadHome(); },
+    saveMeta(id,data){ if(this.user) post('ssave',{kind:'meta',id,data}).catch(e=>console.warn(e)); },
     // notes, flashcards, drawings, topic notes + progress: saved in the Sheet's "Saved" tab
     store:{
       async list(kind){ const {items}=await api('slist',{...me(),kind}); return items.sort((a,b)=>(b.updated||0)-(a.updated||0)); },
@@ -4082,13 +4079,26 @@ const SHEET_URL='https://script.google.com/macros/s/AKfycbwmhTHAp_0Hib5m4Pcsv2zs
       const nkey=await hash(this.name,n); await api('pw',{...me(),nkey}); L.set('cs_sess',{name:this.name,key:nkey});
     },
     feedback:{ send(type,text){ return api('feedback',{...me(),type,text:String(text).slice(0,1000)}); }, list:async()=>[], remove:nope },
-    friends:{ send:async()=>{ throw new Error('Friends aren\'t available. Send people the link instead.'); }, accept:nope, decline:nope, remove:nope, invite:nope, dismiss:async()=>{}, stats:async()=>({}) },
+    friends:{
+      async send(name){ const j=await api('fsend',{...me(),to:String(name).trim()}); sync(); return j.msg; },
+      async accept(q){ await api('fresp',{...me(),from:q.id,ok:'1'}); await sync(); },
+      async decline(q){ await api('fresp',{...me(),from:q.id,ok:'0'}); await sync(); },
+      async remove(f){ await api('frem',{...me(),other:f.id}); await sync(); },
+      async invite(id,code){ await api('finv',{...me(),to:id,code:String(code)}); },
+      async dismiss(id){ try{ await api('idis',{...me(),id}); }catch(e){} },
+      async stats(){ return {}; }
+    },
+    setGG(on){ if(this.user) api('ggset',{...me(),on:on?'1':'0'}).then(()=>sync()).catch(()=>{}); },
     chat:{ send:nope, remove:nope, listen:()=>()=>{}, cleanup:async()=>{} },
     dm:{ send:nope, remove:nope, listen:()=>()=>{}, cleanup:async()=>{}, markRead:async()=>{}, setKeep:nope, meta:async()=>({}) },
     study:{ create:nope, invite:nope, update:nope, point:nope, listen:()=>()=>{} },
     admin:{ list:async()=>[], setBanned:nope, resetStats:nope }
   };
 
+  let syncT=null;
+  async function sync(){ if(!Acct.user) return; try{ const j=await api('fsync',{...me()}); App.setFriends(j.friends||[]); App.setRequests(j.requests||[]); App.setInvites(j.invites||[]); if(j.me&&j.me.gg&&typeof ggUnlocked==='function'&&!ggUnlocked()){ try{ localStorage.setItem(ggKey(),'1'); }catch(e){} syncGG(); } }catch(e){ console.warn(e); } }
+  function startSync(){ stopSync(); sync(); syncT=setInterval(()=>{ if(!document.hidden) sync(); },10000); }
+  function stopSync(){ if(syncT){ clearInterval(syncT); syncT=null; } }
   async function loadHome(){
     if(!Acct.user) return;
     App.setResume(L.get(k()+'_cur',null)); App.setRecent(L.get(k()+'_games',[]));
@@ -4106,9 +4116,15 @@ const SHEET_URL='https://script.google.com/macros/s/AKfycbwmhTHAp_0Hib5m4Pcsv2zs
 
   function start(name,key){
     L.set('cs_sess',{name,key}); Acct.user={uid:name.toLowerCase()}; Acct.name=name; Acct.isAdmin=ADMINS.includes(name.toLowerCase());
-    wm(''); App.applyPrefs(L.get(k()+'_prefs',null)); App.signedIn(name); loadHome();
+    wm(''); App.applyPrefs(L.get(k()+'_prefs',null)); App.signedIn(name); loadHome(); startSync(); try{ if(ggUnlocked()) Acct.setGG(true); }catch(e){}
     Acct.loadProfile().then(p=>App.applyProfile&&App.applyProfile(p));
-    Acct.store.list('meta').then(m=>{ const p=m.find(x=>x.id==='prefs'); if(p){ delete p.id; L.set(k()+'_prefs',p); App.applyPrefs(p); } }).catch(()=>{});
+    Acct.store.list('meta').then(m=>{ const p=m.find(x=>x.id==='prefs'); if(p){ delete p.id; L.set(k()+'_prefs',p); App.applyPrefs(p); }
+      const g=id=>m.find(x=>x.id===id);
+      const st=g('settings'); if(st){ const o={...st}; delete o.id; Object.assign(SETTINGS,o); try{ localStorage.setItem('cs_settings',JSON.stringify(SETTINGS)); }catch(e){} try{ applySettings(); }catch(e){} }
+      const lv=g('levels'); if(lv){ for(const id of Object.keys(lv)) if(id!=='id'){ try{ localStorage.setItem('cs_lvl_'+id,JSON.stringify(lv[id])); }catch(e){} } }
+      const rc=g('recent'); if(rc&&Array.isArray(rc.list)){ L.set(k()+'_games',rc.list); App.setRecent(rc.list); }
+      const cu=g('cur'); if(cu){ if(cu.mv!=null&&cu.mode){ delete cu.id; L.set(k()+'_cur',cu); App.setResume(cu); } else { L.set(k()+'_cur',null); App.setResume(null); } }
+    }).catch(()=>{});
     migrate();
   }
   // first sign-in on a device: copy anything saved only in this browser up to the Sheet
@@ -4139,7 +4155,7 @@ const SHEET_URL='https://script.google.com/macros/s/AKfycbwmhTHAp_0Hib5m4Pcsv2zs
   $('signup').onclick=()=>enter('signup');
   $('pw').onkeydown=e=>{ if(e.key==='Enter') $('login').click(); };
   $('uname').onkeydown=e=>{ if(e.key==='Enter') $('pw').focus(); };
-  document.querySelectorAll('.js-logout').forEach(e=>e.onclick=()=>{ L.set('cs_sess',null); Acct.user=null; Acct.name=null; App.signedOut(); });
+  document.querySelectorAll('.js-logout').forEach(e=>e.onclick=()=>{ stopSync(); L.set('cs_sess',null); Acct.user=null; Acct.name=null; App.signedOut(); });
 
   if(!SHEET_URL){ App.noAccounts('Accounts aren\'t set up yet. Paste the Google Sheet web app URL into SHEET_URL.'); return; }
   const s=L.get('cs_sess',null);
@@ -4150,7 +4166,7 @@ const SHEET_URL='https://script.google.com/macros/s/AKfycbwmhTHAp_0Hib5m4Pcsv2zs
 <style>
 /* social features need a live server, so they're hidden in the Sheet version */
 #openmsgs,#openchat,#openadmin,#mnav [data-go="msgs"],#dmstudy,#finvrow,#pfpwbox:empty{display:none!important}
-#friends .fitem .primary,#friends #frq{display:none}
+#friends #frq{display:none}
 </style>
 </body>
 </html>
